@@ -2,25 +2,46 @@ package br.com.fiap.petshop.domain.entity.servico;
 
 import br.com.fiap.petshop.domain.entity.animal.Animal;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "TB_SERVICO")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TP_SERVICO")
 public abstract class Servico {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_SERVICO")
+    @Column(name = "ID_SERVICO")
     private Long id;
 
+    @Column(name = "VALOR_SERVICO")
     private BigDecimal valor;
 
+    @Column(name = "ABERTURA_SERVICO")
     private LocalDateTime abertura;
 
+    @Column(name = "AUTORIZACAO_SERVICO")
     private LocalDateTime autorizacao;
 
+    @Column(name = "CONCLUSAO_SERVICO")
     private LocalDateTime conclusao;
 
+    @Column(name = "DS_SERVICO")
     private String descricao;
 
+    @Column(name = "OBS_SERVICO")
     private String observacao;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "ANIMAL",
+            referencedColumnName = "ID_ANIMAL",
+            foreignKey = @ForeignKey(name = "FK_ANIMAL_SERVICO"),
+            nullable = false
+    )
     private Animal animal;
 
     public Servico() {

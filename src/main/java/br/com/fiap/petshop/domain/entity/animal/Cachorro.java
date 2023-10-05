@@ -4,9 +4,13 @@ import br.com.fiap.petshop.domain.entity.Sexo;
 import br.com.fiap.petshop.domain.entity.servico.Servico;
 import br.com.fiap.petshop.infra.security.entity.Pessoa;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
+@Entity
+@Table(name = "TB_CACHORRO")
+@DiscriminatorValue("CACHORRO")
 public class Cachorro extends Animal{
     public Cachorro() {
     }

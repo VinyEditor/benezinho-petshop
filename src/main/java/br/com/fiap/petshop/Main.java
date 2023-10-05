@@ -22,45 +22,4 @@ import java.net.URI;
 public class Main {
     public static final String BASE_URI = "http://localhost/api/";
 
-    public static final String PERSISTENCE_UNIT = "maria-db";
-
-    @PersistenceContext
-    static EntityManager manager;
-
-    public static HttpServer startServer() {
-
-
-        final ResourceConfig rc = new ResourceConfig()
-                // Configure container response filters (CORSFilter)
-                .register(CORSFilter.class)
-                // .register( UpdatableBCrypt.build(10))
-                // Configure container request filters (JsTokenFilterNeeded)
-                .register(JsTokenFilterNeeded.class)
-                .register(
-                        new AbstractBinder() {
-                            @Override
-                            protected void configure() {
-                                bindFactory(EntityManagerFactoryProvider.class)
-                                        .to(EntityManagerFactory.class)
-                                        .in(Singleton.class);
-                                bindFactory(EntityManagerProvider.class)
-                                        .to(EntityManager.class)
-                                        .in(RequestScoped.class);
-                            }
-                        }
-                ).register(EntityManagerFactoryProvider.of(PERSISTENCE_UNIT).provide())
-                .packages("br.com.fiap.petshop.domain.resources", "br.com.fiap.petshop.infra.security.resources");
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
-    }
-
-    public static void main(String[] args) {
-        final HttpServer server = startServer();
-        System.out.println(String.format("Petshop app started with endpoints available as %s%nHit Ctrl-C to stop it....", BASE_URI + "hello"));
-        try {
-            System.in.read();
-            server.stop();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-}
+    public static final String PERSISTENCE_UNIT = "oracle-fiap";

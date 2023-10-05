@@ -3,24 +3,71 @@ package br.com.fiap.petshop.domain.entity.animal;
 import br.com.fiap.petshop.domain.entity.Sexo;
 import br.com.fiap.petshop.domain.entity.servico.Servico;
 import br.com.fiap.petshop.infra.security.entity.Pessoa;
+import org.checkerframework.checker.units.qual.C;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Entity
+@Table(name = "TB_ANIMAL")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TP_ANIMAL")
 public abstract class Animal {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_ANIMAL")
+    @Column(name = "ID_ANIMAL")
     private Long id;
+
+    @Column(name = "NM_ANIMAL")
     private String nome;
+
+    @Column(name = "SX_ANIMAL")
     private Sexo sexo;
+
+    @Column(name = "DT_NASCIMENTO_ANIMAL")
     private LocalDate nascimento;
+
+    @Column(name = "RACA_ANIMAL")
     private String raca;
+
+    @Column(name = "DS_ANIMAL")
     private String descricao;
+
+    @Column(name = "OBS_ANIMAL")
     private String observacao;
+
+    @ManyToOne
+    @JoinColumn(
+            name = "DONO",
+            referencedColumnName = "ID_PESSOA",
+            foreignKey = @ForeignKey(name = "FK_PESSOA_ANIMAL"),
+            nullable = false
+    )
     private Pessoa dono;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "TB_SERVICO_ANIMAL",
+            joinColumns = {
+                    @JoinColumn(
+                            name = "ANIMAL",
+                            referencedColumnName = "ID_ANIMAL",
+                            foreignKey = @ForeignKey(name = "FK_ANIMAL_SERVICO")
+                    )
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(
+                            name = "SERVICO",
+                            referencedColumnName = "ID_SERVICO",
+                            foreignKey = @ForeignKey(name = "FK_SERVICO_ANIMAL")
+                    )
+            }
+    )
     private Set<Servico> servicos = new LinkedHashSet<>();
 
     public Animal() {

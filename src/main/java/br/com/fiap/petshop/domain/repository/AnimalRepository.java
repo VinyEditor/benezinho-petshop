@@ -1,10 +1,8 @@
 package br.com.fiap.petshop.domain.repository;
 
-import br.com.fiap.petshop.Main;
 import br.com.fiap.petshop.domain.entity.animal.Animal;
-import br.com.fiap.petshop.infra.database.EntityManagerFactoryProvider;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,31 +33,52 @@ public class AnimalRepository implements Repository<Animal, Long> {
 
     @Override
     public List<Animal> findAll() {
-        return null;
+        String jpql = "FROM Animal a";
+        List<Animal> list = manager.createQuery(jpql).getResultList();
+        return list;
     }
 
     @Override
     public Animal findById(Long id) {
-        return null;
+        Animal animal = manager.find(Animal.class, id);
+        return animal;
     }
 
     @Override
     public List<Animal> findByTexto(String texto) {
-        return null;
+        String jpql = "FROM Animal a where Lower(a.nome)=:nome";
+        Query query = manager.createQuery(jpql);
+        query.setParameter("nome", texto.toLowerCase());
+        List<Animal> list = query.getResultList();
+        return list;
     }
 
     @Override
     public Animal persist(Animal animal) {
-        return null;
+        manager.getTransaction().begin();
+        manager.persist(animal);
+        manager.getTransaction().commit();
+        return animal;
     }
 
     @Override
     public Animal update(Animal animal) {
-        return null;
+        manager.getTransaction().begin();
+        Animal animal_atualizar = manager.merge(animal);
+        manager.getTransaction().commit();
+        return animal_atualizar;
     }
 
     @Override
     public boolean delete(Animal animal) {
+        manager.getTransaction().begin();
+        Animal animal_deletar = manager.find(Animal.class, animal.getId());
+        if (animal_deletar != null) {
+            manager.remove(animal_deletar);
+            manager.getTransaction().commit();
+            return true;
+        }
+        manager.getTransaction().rollback();
         return false;
     }
 }

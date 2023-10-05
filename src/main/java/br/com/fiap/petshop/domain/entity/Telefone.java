@@ -2,14 +2,29 @@ package br.com.fiap.petshop.domain.entity;
 
 import br.com.fiap.petshop.infra.security.entity.Pessoa;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "TB_TELEFONE")
 public class Telefone {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_TELEFONE")
+    @Column(name = "ID_TELEFONE")
     private Long id;
 
+    @Column(name = "DDD_TELEFONE")
     private int ddd;
 
+    @Column(name = "NUM_TELEFONE")
     private String numero;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "PESSOA",
+            referencedColumnName = "ID_PESSOA",
+            foreignKey = @ForeignKey(name = "FK_PESSOA_TELEFONE")
+    )
     private Pessoa pessoa;
 
     public Telefone() {
@@ -77,4 +92,3 @@ public class Telefone {
                 '}';
     }
 }
-
